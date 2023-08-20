@@ -1,11 +1,11 @@
-import {getConnection} from "../database/database"
+import {getPool} from "../database/database"
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const saltRounds = 10;
 
 const getUsers= async (req, res)=>{
     try {
-        const connection= await getConnection();
+        const connection= await getPool();
         const result=await connection.query("SELECT id, username FROM `users`");
         res.json(result); 
     } catch (error) {
@@ -24,7 +24,7 @@ const updateUser= async (req, res)=>{
         }
 
         const usuario = {username, password};
-        const connection= await getConnection();
+        const connection= await getPool();
         const result=await connection.query("UPDATE `users` SET ? where id = ?", [usuario, id]);
         res.json(result); 
     } catch (error) {
@@ -36,7 +36,7 @@ const updateUser= async (req, res)=>{
 const getUser= async (req, res)=>{
     try {
         const {id} = req.params;
-        const connection= await getConnection();
+        const connection= await getPool();
         const result=await connection.query("SELECT id, username FROM `users` WHERE id = ?", id);
         res.json(result); 
     } catch (error) {
@@ -48,7 +48,7 @@ const getUser= async (req, res)=>{
 const deleteUser= async (req, res)=>{
     try {
         const {id} = req.params;
-        const connection= await getConnection();
+        const connection= await getPool();
         const result=await connection.query("DELETE FROM `users` WHERE id = ?", id);
         res.json(result); 
     } catch (error) {
@@ -71,7 +71,7 @@ const addUsers= async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const usuario = {username, password: hashedPassword, email};
-        connection = await getConnection();
+        connection = await getPool();
         const result = await connection.query("INSERT INTO users SET ?", usuario);
 
         res.json(result);
@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
       const { email, password } = req.body;
   
       // Primero, obtén el usuario de la base de datos usando el nombre de usuario proporcionado
-      const connection = await getConnection();
+      const connection = await getPool();
       const users = await connection.query("SELECT * FROM `users` WHERE email = ?", email);
   
       // Verifica si el usuario existe
@@ -119,7 +119,7 @@ const loginUser = async (req, res) => {
 const getProfile = async (req, res) => {
     try {
         const {id} = req.params;
-        const connection= await getConnection();
+        const connection= await getPool();
         const result=await connection.query("SELECT id, username FROM `users` WHERE id = ?", id);
         if (result && result.length > 0) {
             res.json(result[0]);
@@ -137,7 +137,7 @@ const getProfile = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         const { userId, message, recipient_id } = req.body; // asumiendo que el front-end envía el ID del usuario y el mensaje
-        const connection = await getConnection();
+        const connection = await getPool();
         await connection.query("INSERT INTO mensajes (user_id, message, recipient_id) VALUES (?, ?, ?)", [userId, message, recipient_id]);
         res.json({ message: "Message sent successfully." });
     } catch (error) {
@@ -148,7 +148,7 @@ const sendMessage = async (req, res) => {
 const getMessagesBetweenUsers = async (req, res) => {
     try {
         const { user1Id, user2Id } = req.params;
-        const connection = await getConnection();
+        const connection = await getPool();
         const messages = await connection.query("SELECT u.username, m.message, m.timestamp FROM mensajes m JOIN users u ON m.user_id = u.id WHERE (m.user_id = ? AND m.recipient_id = ?) OR (m.user_id = ? AND m.recipient_id = ?) ORDER BY m.timestamp ASC", [user1Id, user2Id, user2Id, user1Id]);
         res.json(messages);
     } catch (error) {
