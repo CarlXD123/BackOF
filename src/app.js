@@ -1,13 +1,12 @@
 import express from "express";
 import morgan from "morgan";
-import config from "../config";
 //Routes
 import userRoutes from "./routes/language.routes"
 
 const app=express();
 
 //Settings
-app.set("port", config.port);
+app.set("port", 3306);
 
 //Middlewares
 app.use(morgan("dev"));
