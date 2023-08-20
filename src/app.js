@@ -7,7 +7,7 @@ import userRoutes from "./routes/language.routes"
 const app=express();
 
 //Settings
-app.set("port", 3306);
+app.set("port", config.port);
 
 //Middlewares
 app.use(morgan("dev"));
