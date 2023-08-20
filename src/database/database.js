@@ -9,16 +9,10 @@ const pool = mysql.createPool({
     connectionLimit: 10 // Puedes ajustar este valor según las necesidades de tu aplicación
 });
 
-const getConnection = async () => {
-    try {
-        const connection = await pool.getConnection();
-        connection.release(); // Devuelve la conexión al pool después de obtenerla
-        return pool;
-    } catch (error) {
-        throw error;
-    }
+const getPool = () => {
+    return pool;
 };
 
 module.exports = {
-    getConnection
+    getPool
 };
