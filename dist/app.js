@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 var app = (0, _express["default"])();
 
 //Settings
-app.set("port", 4000);
+app.set("port", 3306);
 
 //Middlewares
 app.use((0, _morgan["default"])("dev"));
